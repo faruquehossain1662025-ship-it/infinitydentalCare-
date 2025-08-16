@@ -1,0 +1,15 @@
+[
+    {
+        "id": "6899eb71769381.45200226",
+        "patient_id": "6899d8c6207e81.48475152",
+        "patient_name": "Md. Faruque Hossain",
+        "appointment_id": "APT202508115484",
+        "report_type": "চেকআপ",
+        "diagnosis": "cnhgvjhghbj",
+        "treatment": "vbjvbnjbvjbjb",
+        "prescription": "bjbvjbjb",
+        "follow_up_date": "2025-08-11",
+        "notes": "",
+        "created_at": "2025-08-11 19:09:05"
+    }
+]

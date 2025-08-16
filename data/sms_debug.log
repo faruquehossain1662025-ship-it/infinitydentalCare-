@@ -1,0 +1,38 @@
+2025-08-14 11:20:40 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"আপনার অ্যাপয়েন্টমেন্ট (APT202508146455) অনুমোদিত হয়েছে।","to":"1706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:22:10 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"প্রিয় Md. Faruque Hossain,\nআপনার অ্যাপয়েন্টমেন্ট অনুমোদিত হয়েছে।\nসেবা: দাঁত সাদা করা (Teeth Whitening)\nতারিখ: 2025-08-13\nসময়: 19:00\nনোট: আপনি আসতে পারেন\nধন্যবাদ, ইনফিনিটি ডেন্টাল কেয়ার","to":"88001706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:22:10 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"আপনার অ্যাপয়েন্টমেন্ট (APT202508138814) অনুমোদিত হয়েছে।","to":"88001706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:23:00 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"প্রিয় Shitol,\nআপনার অ্যাপয়েন্টমেন্ট অনুমোদিত হয়েছে।\nসেবা: স্কেলিং ও পলিশিং\nতারিখ: 2025-08-13\nসময়: 17:00\nধন্যবাদ, ইনফিনিটি ডেন্টাল কেয়ার","to":"1706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:23:00 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"আপনার অ্যাপয়েন্টমেন্ট (APT202508133214) অনুমোদিত হয়েছে।","to":"1706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:24:20 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"Test message from Infinity Dental Care","to":"88001706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+2025-08-14 11:24:38 - {"url":"https:\/\/api.sms.net.bd\/sendsms","data":{"api_key":"YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2","msg":"Test message from Infinity Dental Care","to":"88001706685943"},"response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+{"timestamp":"2025-08-14 11:28:54","phone":"88001706685943","message":"Test message from Infinity Dental Care...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=Test+message+from+Infinity+Dental+Care&to=88001706685943","response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+
+
+{"timestamp":"2025-08-14 11:30:03","phone":"88001706685943","message":"Test message from Infinity Dental Care - পরী...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=Test+message+from+Infinity+Dental+Care+-+%E0%A6%AA%E0%A6%B0%E0%A7%80%E0%A6%95%E0%A7%8D%E0%A6%B7%E0%A6%BE%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A6%95+%E0%A6%AE%E0%A7%87%E0%A6%B8%E0%A7%87%E0%A6%9C&to=88001706685943","response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+{"timestamp":"2025-08-14 11:30:21","phone":"1706685943","message":"Test message from Infinity Dental Care - পরী...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=Test+message+from+Infinity+Dental+Care+-+%E0%A6%AA%E0%A6%B0%E0%A7%80%E0%A6%95%E0%A7%8D%E0%A6%B7%E0%A6%BE%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A6%95+%E0%A6%AE%E0%A7%87%E0%A6%B8%E0%A7%87%E0%A6%9C&to=1706685943","response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+{"timestamp":"2025-08-14 11:30:41","phone":"8801706685943","message":"Test message from Infinity Dental Care - পরী...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=Test+message+from+Infinity+Dental+Care+-+%E0%A6%AA%E0%A6%B0%E0%A7%80%E0%A6%95%E0%A7%8D%E0%A6%B7%E0%A6%BE%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A6%95+%E0%A6%AE%E0%A7%87%E0%A6%B8%E0%A7%87%E0%A6%9C&to=8801706685943","response":"{\"error\":0,\"msg\":\"Request successfully submitted\",\"data\":{\"request_id\":13437642}}","http_code":200,"curl_error":""}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{"timestamp":"2025-08-14 16:51:54","phone":"+88001706685943","message":"Hello Developer...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=Hello+Developer&to=%2B88001706685943","response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}
+{"timestamp":"2025-08-14 16:58:02","phone":"+88001706685943","message":"প্রিয় Shitol Kar, আপনার অ...","url":"https:\/\/api.sms.net.bd\/sendsms?api_key=YYlYUp1EZ86vA4uFwpJ183M01z6OmSx96FRNNOd2&msg=%E0%A6%AA%E0%A7%8D%E0%A6%B0%E0%A6%BF%E0%A6%AF%E0%A6%BC+Shitol+Kar%2C+%E0%A6%86%E0%A6%AA%E0%A6%A8%E0%A6%BE%E0%A6%B0+%E0%A6%85%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%AA%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%AE%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F+%E0%A6%85%E0%A6%A8%E0%A7%81%E0%A6%AE%E0%A7%8B%E0%A6%A6%E0%A6%BF%E0%A6%A4+%E0%A6%B9%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%9B%E0%A7%87%E0%A5%A4+%E0%A6%B8%E0%A7%87%E0%A6%AC%E0%A6%BE%3A+%E0%A6%B8%E0%A6%BE%E0%A6%A7%E0%A6%BE%E0%A6%B0%E0%A6%A3+%E0%A6%9A%E0%A7%87%E0%A6%95%E0%A6%86%E0%A6%AA%2C+%E0%A6%A4%E0%A6%BE%E0%A6%B0%E0%A6%BF%E0%A6%96%3A+2025-08-14%2C+%E0%A6%B8%E0%A6%AE%E0%A6%AF%E0%A6%BC%3A+09%3A00%E0%A5%A4+%E0%A6%A7%E0%A6%A8%E0%A7%8D%E0%A6%AF%E0%A6%AC%E0%A6%BE%E0%A6%A6%2C+%E0%A6%87%E0%A6%A8%E0%A6%AB%E0%A6%BF%E0%A6%A8%E0%A6%BF%E0%A6%9F%E0%A6%BF+%E0%A6%A1%E0%A7%87%E0%A6%A8%E0%A7%8D%E0%A6%9F%E0%A6%BE%E0%A6%B2+%E0%A6%95%E0%A7%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0&to=%2B88001706685943","response":"{\"error\":416,\"msg\":\"No valid number found\"}","http_code":200,"curl_error":""}

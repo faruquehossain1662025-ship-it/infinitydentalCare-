@@ -1,0 +1,23 @@
+[
+    {
+        "id": "6899d74a6b0d64.22330428",
+        "title": "dfhgfh",
+        "content": "fghfghg",
+        "type": "offer",
+        "button_text": "ddd",
+        "button_url": "https:\/\/infinitydentalcare.top\/New%20\/HealthConnectPro\/admin\/popups.php",
+        "image": "",
+        "display_delay": 5,
+        "frequency_days": 1,
+        "target_pages": [
+            "all",
+            "home",
+            "services",
+            "appointment",
+            "contact"
+        ],
+        "active": true,
+        "created_at": "2025-08-11 17:43:06",
+        "updated_at": "2025-08-15 18:51:53"
+    }
+]

@@ -1,0 +1,53 @@
+{"datetime":"2025-08-14 10:52:33","phone":"1706685943","message":"আপনার অ্যাপয়েন্টমেন্ট (APT202508146455) অপেক্ষমাণ হয়েছে।","status":"API Error","response":"{\"error\":405,\"msg\":\"Authorization required\"}"}
+{"datetime":"2025-08-14 10:53:05","phone":"1706685943","message":"প্রিয় generate_image.php,\n\nআপনার অ্যাপয়েন্টমেন্ট অনুমোদিত হয়েছে।\n\nবিস্তারিত:\nসেবা: ব্রেস (Orthodontics)\nতারিখ: 2025-08-14\nসময়: 16:00\n\nধন্যবাদ,\nইনফিনিটি ডেন্টাল কেয়ার\nফোন: +881805120670","status":"API Error","response":"{\"error\":405,\"msg\":\"Authorization required\"}"}
+{"datetime":"2025-08-14 10:53:05","phone":"1706685943","message":"আপনার অ্যাপয়েন্টমেন্ট (APT202508146455) অনুমোদিত হয়েছে।","status":"API Error","response":"{\"error\":405,\"msg\":\"Authorization required\"}"}
+{"datetime":"2025-08-14 10:57:40","phone":"1706685943","message":"আপনার অ্যাপয়েন্টমেন্ট (APT202508146455) অনুমোদিত হয়েছে।","status":"API Error","response":"{\"error\":416,\"msg\":\"No valid number found\"}"}
+{"datetime":"2025-08-14 11:03:03","phone":"1706685943","message":"আপনার অ্যাপয়েন্টমেন্ট (APT202508146455) অনুমোদিত হয়েছে।","status":"API Error","response":"{\"error\":416,\"msg\":\"No valid number found\"}"}
+
+
+
+
+
+{"datetime":"2025-08-14 11:24:20","phone":"88001706685943","message":"Test message from Infinity Dental Care","status":"API Error","response":"No valid number found"}
+{"datetime":"2025-08-14 11:24:38","phone":"88001706685943","message":"Test message from Infinity Dental Care","status":"API Error","response":"No valid number found"}
+{"datetime":"2025-08-14 11:28:54","phone":"88001706685943","message":"Test message from Infinity Dental Care","status":"API Error","response":"No valid number found"}
+
+
+{"datetime":"2025-08-14 11:30:03","phone":"88001706685943","message":"Test message from Infinity Dental Care - পরীক্ষামূলক মেসেজ","status":"API Error","response":"No valid number found"}
+{"datetime":"2025-08-14 11:30:21","phone":"1706685943","message":"Test message from Infinity Dental Care - পরীক্ষামূলক মেসেজ","status":"API Error","response":"No valid number found"}
+{"datetime":"2025-08-14 11:30:41","phone":"8801706685943","message":"Test message from Infinity Dental Care - পরীক্ষামূলক মেসেজ","status":"Success","response":"{\"error\":0,\"msg\":\"Request successfully submitted\",\"data\":{\"request_id\":13437642}}"}
+
+
+
+{"datetime":"2025-08-14 11:35:02","phone":"1706685943","message":"প্রিয় generate_image.php, আপনার অ্যাপয়েন্টমেন্","status":"API Error","response":"No valid number found"}
+
+
+
+
+
+{"datetime":"2025-08-14 11:42:47","phone":"1706685943","message":"প্রিয় generate_image.php, আপনার অ্যাপয়েন্টমেন্","status":"API Error","response":"No valid number found"}
+
+
+
+
+
+
+
+
+
+{"datetime":"2025-08-14 11:56:54","phone":"1706685943","message":"Appointment Approval SMS","status":"Invalid Phone Number","response":"Not a valid Bangladeshi mobile number"}
+
+
+
+
+
+
+{"datetime":"2025-08-14 13:11:05","phone":"+88001706685943","message":"প্রিয় Md. Faruque Hossain, দুঃখিত, আপনার অ্যাপয়ে","status":"API Error","response":"No valid number found"}
+
+
+
+{"datetime":"2025-08-14 16:36:15","phone":"+88001706685943","message":"প্রিয় {name}, নিয়মিত দাঁত ব্রাশ করুন এবং","status":"API Error","response":"No valid number found"}
+
+{"datetime":"2025-08-14 16:51:43","phone":"1706685943","message":"hello Developer Shitol IAm Developer","status":"Invalid Bangladesh Number","response":"Phone number is not a valid Bangladeshi mobile number"}
+{"datetime":"2025-08-14 16:51:54","phone":"+88001706685943","message":"Hello Developer","status":"API Error","response":"No valid number found"}
+

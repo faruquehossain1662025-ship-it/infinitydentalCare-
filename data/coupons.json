@@ -1,0 +1,28 @@
+[
+    {
+        "id": "689f2b96eb9dc0.95788319",
+        "code": "SHITOL",
+        "description": "now first time",
+        "discount_type": "fixed",
+        "discount_value": 500,
+        "max_discount": 0,
+        "min_amount": 2000,
+        "usage_limit": 2,
+        "used_count": 0,
+        "applicable_services": [
+            "689ad1f9a60273.28708964",
+            "689ad23f3f31b2.57103695",
+            "689ad27eafddb2.68284947",
+            "689ad2bb8beb73.98006368",
+            "689ad2fa2ea027.23648850",
+            "689ad36192c0b4.13146268",
+            "689ad3e5ac6205.98437840",
+            "689ad43692f5f5.93395138",
+            "689ad4636d68b0.63376031"
+        ],
+        "start_date": "2025-08-15",
+        "end_date": "2025-08-22",
+        "active": true,
+        "created_at": "2025-08-15 18:44:06"
+    }
+]
