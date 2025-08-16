@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ডাক্তারের প্রোফাইল - Infinity Dental Care</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root{
+      --brand: #035efc;
+      --dark: #0f1724;
+      --muted: #6b7280;
+      --radius: 12px;
+    }
+    body{font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f8fafc; color:var(--dark);}
+    .doctor-card{border-radius:var(--radius); box-shadow:0 6px 18px rgba(15,23,36,0.06); overflow:hidden}
+    .doctor-header{background:linear-gradient(90deg,var(--brand),#0284c7); color:#fff; padding:2rem}
+    .avatar{width:140px; height:140px; border-radius:50%; object-fit:cover; border:6px solid rgba(255,255,255,0.12)}
+    .info-label{font-weight:600; color:var(--muted);}
+    .chip{background:rgba(3,94,252,0.08); color:var(--brand); padding:6px 10px; border-radius:999px; font-weight:600; font-size:0.9rem}
+    .contact-btns .btn{border-radius:10px}
+    .service-list li{padding:0.35rem 0}
+    .schedule .day{display:flex; justify-content:space-between; padding:0.45rem 0; border-bottom:1px dashed rgba(15,23,36,0.04)}
+    @media (max-width:768px){ .doctor-header{padding:1.25rem} .avatar{width:110px;height:110px} }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="doctor-card bg-white">
+      <div class="doctor-header d-flex align-items-center gap-4 flex-md-row flex-column">
+        <div class="d-flex align-items-center gap-3">
+          <!-- ডাক্তারের ছবি বদলানোর জন্য src attribute পরিবর্তন করুন -->
+          <img src="https://via.placeholder.com/300x300.png?text=Doctor+Photo" alt="Dr. Name" class="avatar">
+        </div>
+        <div class="flex-grow-1 text-white">
+          <h3 class="mb-1">ডাঃ কামরুল হাসান </h3>
+          <div class="d-flex gap-2 align-items-center mb-2">
+            <span class="chip">বর্তমান: প্রধান ডেন্টিস্ট</span>
+            <small class="text-white-50">&nbsp;|&nbsp; MDDS, BDS</small>
+          </div>
+          <p class="mb-1" style="opacity:0.95">ডেন্টিস্ট, Cosmetic & Restorative Dentistry বিশেষজ্ঞ — রোগী-নির্ভর, কোমপ্যাশনেট কেয়ার।</p>
+          <div class="mt-3 contact-btns">
+            <a href="tel:+8801805120670" class="btn btn-light btn-sm me-2"><i class="bi bi-telephone-fill me-1"></i> কল করুন</a>
+            <a href="https://wa.me/8801805120670" target="_blank" class="btn btn-outline-light btn-sm"><i class="bi bi-whatsapp me-1"></i> WhatsApp</a>
+            <button class="btn btn-dark btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#bookModal"><i class="bi bi-calendar2-plus-fill me-1"></i> বুক করুন</button>
+          </div>
+        </div>
+        <div class="text-end text-white mt-3 mt-md-0">
+          <div class="mb-2"><small class="d-block" style="opacity:0.9">রেটিং</small><h4 class="mb-0">4.8 <small class="text-white-50">/5</small></h4></div>
+          <div class="mt-3"><span class="small">ভিজিট ফি</span><div class="h5 mb-0">৳ 500</div></div>
+        </div>
+      </div>
+
+      <div class="p-4">
+        <div class="row gy-4">
+          <div class="col-md-8">
+            <h5 class="mb-3">বিস্তারিত পরিচিতি</h5>
+            <p>ডাঃ মোহাম্মদ হাসান বিগত ১২ বছর ধরে ডেন্টাল চিকিৎসায় কার্যরত। Cosmetic dentistry, root canal treatment, crowns & bridges, এবং দাঁতের সার্জারিতে বিশেষ দক্ষতা রয়েছে। তিনি রোগীর উদ্বেগ শুনে ব্যক্তিগত চিকিৎসা পরিকল্পনা তৈরি করেন।</p>
+
+            <h6 class="mt-4">যোগ্যতা</h6>
+            <ul>
+              <li>BDS – Dhaka Medical College</li>
+              <li>MDDS – Cosmetic Dentistry (UK)</li>
+              <li>Certificate in Implantology</li>
+            </ul>
+
+            <h6 class="mt-3">বিশেষ সেবা</h6>
+            <ul class="service-list">
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Root Canal Treatment</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Dental Implants</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Teeth Whitening</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Crowns & Bridges</li>
+            </ul>
+
+            <h6 class="mt-4">অভিজ্ঞতা</h6>
+            <p>১২ বছরের ক্লিনিকাল অভিজ্ঞতা, ৫০০০+ সফল প্রোসিডিউর, এবং নিয়মিত কনফারেন্সে অংশগ্রহণ।</p>
+
+            <div class="mt-4">
+              <h6>রোগীর প্রতিক্রিয়া</h6>
+              <blockquote class="blockquote ps-3 border-start border-3" style="border-color:var(--brand)">
+                <p class="mb-0">"চিকিৎসা খুবই পেশাদার ছিল — ডাঃ হাসানের ধৈর্য ও ব্যাখ্যা আমাকে খুব স্বস্তি দিয়েছে।"</p>
+                <footer class="blockquote-footer">রিজওয়ান, Savar</footer>
+              </blockquote>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card p-3 mb-3">
+              <h6 class="mb-3">ডাক্তারের তথ্য</h6>
+              <div class="d-flex justify-content-between mb-2"><div class="info-label">নাম</div><div>ডাঃ মোহাম্মদ হাসান</div></div>
+              <div class="d-flex justify-content-between mb-2"><div class="info-label">পদবী</div><div>প্রধান ডেন্টিস্ট</div></div>
+              <div class="d-flex justify-content-between mb-2"><div class="info-label">অভিজ্ঞতা</div><div>১২ বছর</div></div>
+              <div class="d-flex justify-content-between mb-2"><div class="info-label">ম্যাসেজ</div><div>৳ 500</div></div>
+              <div class="d-flex justify-content-between mb-2"><div class="info-label">কর্মস্থল</div><div>Infinity Dental Care, Savar</div></div>
+              <hr>
+              <h6 class="mb-2">যোগাযোগ</h6>
+              <p class="mb-1"><i class="bi bi-telephone me-2"></i> +8801805120670</p>
+              <p class="mb-1"><i class="bi bi-envelope me-2"></i> info@infinitydentalcare.top</p>
+              <p><i class="bi bi-geo-alt me-2"></i> B-2/11, Radio Colony Road, Savar</p>
+            </div>
+
+            <div class="card p-3 mb-3 schedule">
+              <h6 class="mb-3">অফিস সময়জানক</h6>
+              <div class="day"><div>শনিবার - বৃহস্পতিবার</div><div>১০:০০ AM - ৬:০০ PM</div></div>
+              <div class="day"><div>শুক্রবার</div><div>বন্ধ</div></div>
+              <div class="day"><div>ইমার্জেন্সি</div><div>২৪/৭ (কল করুন)</div></div>
+            </div>
+
+            <div class="card p-3 text-center">
+              <h6 class="mb-2">সামাজিক</h6>
+              <div class="d-flex justify-content-center gap-2">
+                <a href="#" class="btn btn-outline-primary btn-sm"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="btn btn-outline-primary btn-sm"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="btn btn-outline-primary btn-sm"><i class="bi bi-youtube"></i></a>
+              </div>
+              <div class="mt-3">
+                <a href="#" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#bookModal">অ্যাপয়েন্টমেন্ট বুক করুন</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-white border-top d-flex justify-content-between align-items-center">
+        <div class="small text-muted">ডাঃ মোহাম্মদ হাসান — Infinity Dental Care</div>
+        <div>
+          <a href="#" class="btn btn-sm btn-outline-secondary me-2"><i class="bi bi-printer"></i> প্রিন্ট প্রোফাইল</a>
+          <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i> ডাউনলোড কার্ড</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal fade" id="bookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">অ্যাপয়েন্টমেন্ট বুক করুন</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="bookForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">নাম</label>
+              <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">ফোন</label>
+              <input type="tel" class="form-control" name="phone" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">পছন্দসই তারিখ</label>
+              <input type="date" class="form-control" name="date" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">নোট (ঐচ্ছিক)</label>
+              <textarea class="form-control" name="note" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">বন্ধ করুন</button>
+            <button type="submit" class="btn btn-primary">বুক করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Simple client-side booking handler (পরবর্তীতে সার্ভার-সাইড সাবমিশন লাগবে)
+    document.getElementById('bookForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const form = new FormData(this);
+      // এখানে আপনি AJAX করে সার্ভারে পাঠাতে পারেন। বর্তমানে শুধু কনসোলে দেখানো হচ্ছে।
+      console.log('Booking data:', Object.fromEntries(form.entries()));
+      const modal = bootstrap.Modal.getInstance(document.getElementById('bookModal'));
+      modal.hide();
+      alert('আপনার বুকিং রিকোয়েস্ট গ্রহণ করা হয়েছে। আমরা শীঘ্রই যোগাযোগ করবো।');
+      this.reset();
+    });
+  </script>
+</body>
+</html>
