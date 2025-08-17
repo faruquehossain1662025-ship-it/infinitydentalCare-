@@ -13,6 +13,8 @@ $appointments = loadJsonData(APPOINTMENTS_FILE);
 $patients = loadJsonData(PATIENTS_FILE);
 $reviews = loadJsonData(REVIEWS_FILE);
 $income = loadJsonData(INCOME_FILE);
+$expenses = loadJsonData(EXPENSES_FILE);
+$inquiries = loadJsonData(INQUIRIES_FILE);
 $visitors = getVisitorStats();
 
 // SMS Balance check
@@ -26,16 +28,36 @@ $pendingAppointments = count(array_filter($appointments, fn($a) => ($a['status']
 $totalPatients = count($patients);
 $totalReviews = count($reviews);
 $pendingReviews = count(array_filter($reviews, fn($r) => !($r['approved'] ?? false)));
+$totalInquiries = count($inquiries);
 
-// Calculate total income
+// New appointments indicator (last 24 hours)
+$yesterday = date('d-m-Y', strtotime('-1 day'));
+$newAppointments = count(array_filter($appointments, function($a) use ($today, $yesterday) {
+    $appointmentDate = $a['created_at'] ?? $a['date'] ?? '';
+    return strpos($appointmentDate, $today) !== false || strpos($appointmentDate, $yesterday) !== false;
+}));
+
+// Calculate total income and expenses
 $totalIncome = array_sum(array_column($income, 'amount'));
+$totalExpenses = array_sum(array_column($expenses, 'amount'));
 $thisMonthIncome = array_sum(array_column(
     array_filter($income, fn($i) => strpos($i['date'], date('Y-m')) === 0),
     'amount'
 ));
+$thisMonthExpenses = array_sum(array_column(
+    array_filter($expenses, fn($e) => strpos($e['date'], date('Y-m')) === 0),
+    'amount'
+));
+
+// Profit/Loss calculations
+$netProfit = $totalIncome - $totalExpenses;
+$thisMonthProfit = $thisMonthIncome - $thisMonthExpenses;
+
+// Percentage calculations
+$incomePercentage = $totalIncome > 0 ? (($totalIncome / ($totalIncome + $totalExpenses)) * 100) : 0;
+$expensePercentage = ($totalIncome + $totalExpenses) > 0 ? (($totalExpenses / ($totalIncome + $totalExpenses)) * 100) : 0;
 
 // Advanced Analytics Calculations
-
 // 1. Service wise pie chart data
 $serviceStats = [];
 foreach ($appointments as $appointment) {
@@ -63,10 +85,15 @@ for ($i = 29; $i >= 0; $i--) {
         array_filter($income, fn($item) => $item['date'] === $date),
         'amount'
     ));
+    $dayExpense = array_sum(array_column(
+        array_filter($expenses, fn($item) => $item['date'] === $date),
+        'amount'
+    ));
+    
     $dailyFinance[] = [
         'date' => date('d M', strtotime($date)),
         'income' => $dayIncome,
-        'expense' => rand(500, 2000) // Mock expense data
+        'expense' => $dayExpense
     ];
 }
 
@@ -98,55 +125,26 @@ foreach ($reviews as $review) {
         $ratedReviews++;
     }
 }
-$satisfactionRate = $ratedReviews > 0 ? ($totalRating / $ratedReviews) * 20 : 0; // Convert to percentage
+$satisfactionRate = $ratedReviews > 0 ? ($totalRating / $ratedReviews) * 20 : 0;
 
-// 7. Average waiting time (mock calculation)
-$avgWaitingTime = 25; // minutes (mock data)
+// 7. Average waiting time calculation
+$completedAppointments = array_filter($appointments, fn($a) => ($a['status'] ?? '') === 'completed');
+$totalWaitingTime = 0;
+$waitingTimeCount = 0;
+
+foreach ($completedAppointments as $appointment) {
+    if (isset($appointment['actual_time']) && isset($appointment['preferred_time'])) {
+        $preferredTime = strtotime($appointment['preferred_time']);
+        $actualTime = strtotime($appointment['actual_time']);
+        $waitingMinutes = max(0, ($actualTime - $preferredTime) / 60);
+        $totalWaitingTime += $waitingMinutes;
+        $waitingTimeCount++;
+    }
+}
+$avgWaitingTime = $waitingTimeCount > 0 ? round($totalWaitingTime / $waitingTimeCount) : 0;
 
 // 8. Appointment conversion rate
-$totalInquiries = count($appointments) + rand(10, 50); // Mock total inquiries
-$conversionRate = count($appointments) / $totalInquiries * 100;
-
-// 9. Patient retention rate (returning patients)
-$returningPatients = 0;
-$patientAppointments = [];
-foreach ($appointments as $appointment) {
-    $phone = $appointment['phone'];
-    $patientAppointments[$phone] = ($patientAppointments[$phone] ?? 0) + 1;
-}
-foreach ($patientAppointments as $count) {
-    if ($count > 1) $returningPatients++;
-}
-$retentionRate = count($patientAppointments) > 0 ? ($returningPatients / count($patientAppointments)) * 100 : 0;
-
-// 10. Review score trend (last 6 months)
-$reviewTrend = [];
-for ($i = 5; $i >= 0; $i--) {
-    $month = date('Y-m', strtotime("-$i months"));
-    $monthName = date('M Y', strtotime("-$i months"));
-    $monthReviews = array_filter($reviews, fn($r) => strpos($r['created_at'] ?? '', $month) === 0);
-    $monthRating = 0;
-    $monthCount = 0;
-    foreach ($monthReviews as $review) {
-        if (isset($review['rating'])) {
-            $monthRating += $review['rating'];
-            $monthCount++;
-        }
-    }
-    $avgRating = $monthCount > 0 ? $monthRating / $monthCount : 0;
-    $reviewTrend[] = ['month' => $monthName, 'rating' => $avgRating];
-}
-
-// 11. Location-wise patient data
-$locations = [];
-foreach ($patients as $patient) {
-    $address = $patient['address'] ?? 'অজানা';
-    // Extract area from address (simplified)
-    $area = explode(',', $address)[0];
-    $locations[$area] = ($locations[$area] ?? 0) + 1;
-}
-arsort($locations);
-$topLocations = array_slice($locations, 0, 5, true);
+$conversionRate = $totalInquiries > 0 ? ($totalAppointments / $totalInquiries) * 100 : 0;
 
 $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্যানেল';
 ?>
@@ -157,55 +155,68 @@ $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্�
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($pageTitle); ?></title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="css/admin.css" rel="stylesheet">
-    
     <style>
         body {
             background: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
         .stat-card {
             border-radius: 15px;
             border: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
             overflow: hidden;
+            position: relative;
         }
-        
         .stat-card:hover {
             transform: translateY(-3px);
         }
-        
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
             color: white;
             margin-bottom: 0.25rem;
         }
-        
         .stat-label {
             font-size: 0.9rem;
             color: rgba(255,255,255,0.9);
             font-weight: 500;
         }
-        
         .stat-icon {
             font-size: 2.5rem;
             color: rgba(255,255,255,0.8);
         }
-        
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
         .bg-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; }
         .bg-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important; }
         .bg-warning { background: linear-gradient(135deg, #fcb045 0%, #fd1d1d 100%) !important; }
         .bg-info { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; }
         .bg-secondary { background: linear-gradient(135deg, #868f96 0%, #596164 100%) !important; }
         .bg-danger { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%) !important; }
-        
         .chart-card {
             background: white;
             border-radius: 15px;
@@ -214,7 +225,6 @@ $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্�
             margin-bottom: 2rem;
             border: none;
         }
-        
         .chart-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -224,25 +234,13 @@ $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্�
             align-items: center;
             gap: 0.5rem;
         }
-        
-        /* Fixed Chart Container Heights */
         .chart-container {
             position: relative;
             width: 100%;
         }
-        
-        .chart-container-small {
-            height: 280px !important;
-        }
-        
-        .chart-container-medium {
-            height: 320px !important;
-        }
-        
-        .chart-container-large {
-            height: 250px !important;
-        }
-        
+        .chart-container-small { height: 280px !important; }
+        .chart-container-medium { height: 320px !important; }
+        .chart-container-large { height: 250px !important; }
         .metric-card {
             background: white;
             border-radius: 12px;
@@ -251,78 +249,42 @@ $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্�
             text-align: center;
             transition: transform 0.2s ease;
         }
-        
-        .metric-card:hover {
-            transform: translateY(-2px);
-        }
-        
+        .metric-card:hover { transform: translateY(-2px); }
         .metric-value {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-        
         .metric-label {
             color: #6c757d;
             font-size: 0.9rem;
             font-weight: 500;
         }
-        
-        .progress-modern {
-            height: 10px;
-            border-radius: 10px;
-            background: #e9ecef;
-            overflow: hidden;
+        .profit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
         }
-        
-        .progress-bar-modern {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.6s ease;
-        }
-        
-        .location-item {
+        .profit-positive { color: #28a745; }
+        .profit-negative { color: #dc3545; }
+        .percentage-display {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f3f4;
+            margin-top: 1rem;
         }
-        
-        .location-item:last-child {
-            border-bottom: none;
+        .percentage-item {
+            text-align: center;
+            flex: 1;
         }
-        
-        .location-name {
-            font-weight: 500;
-            color: #495057;
+        .percentage-value {
+            font-size: 1.5rem;
+            font-weight: bold;
         }
-        
-        .location-count {
-            font-weight: 600;
-            color: #007bff;
-        }
-        
-        /* Performance Optimizations */
-        .chart-card {
-            will-change: transform;
-        }
-        
-        canvas {
-            max-width: 100%;
-            height: auto !important;
-        }
-        
-        @media (max-width: 768px) {
-            .chart-container-small,
-            .chart-container-medium,
-            .chart-container-large {
-                height: 240px !important;
-            }
-            
-            .stat-value {
-                font-size: 1.5rem;
-            }
+        .percentage-label {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -331,503 +293,335 @@ $pageTitle = 'ড্যাশবোর্ড - অ্যাডমিন প্�
     
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
             <?php include 'includes/sidebar.php'; ?>
             
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Main Content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">
-                        <i class="bi bi-speedometer2 me-2"></i>
-                        ড্যাশবোর্ড
-                    </h1>
+                    <h1 class="h2">ড্যাশবোর্ড</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-calendar3 me-1"></i> আজ
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-calendar-week me-1"></i> এই সপ্তাহ
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-calendar-month me-1"></i> এই মাস
+                                <i class="bi bi-download"></i> রিপোর্ট এক্সপোর্ট
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Main Statistics Cards -->
-                <div class="row g-4 mb-4">
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stat-card bg-primary">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="stat-value"><?php echo $totalAppointments; ?></div>
-                                        <div class="stat-label">মোট অ্যাপয়েন্টমেন্ট</div>
-                                    </div>
-                                    <div class="stat-icon">
-                                        <i class="bi bi-calendar-check"></i>
-                                    </div>
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card stat-card bg-primary">
+                            <?php if ($newAppointments > 0): ?>
+                                <div class="notification-badge"><?php echo $newAppointments; ?></div>
+                            <?php endif; ?>
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <div class="stat-value"><?php echo $totalAppointments; ?></div>
+                                    <div class="stat-label">মোট অ্যাপয়েন্টমেন্ট</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-check"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stat-card bg-success">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="stat-value"><?php echo $totalPatients; ?></div>
-                                        <div class="stat-label">মোট রোগী</div>
-                                    </div>
-                                    <div class="stat-icon">
-                                        <i class="bi bi-people"></i>
-                                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card stat-card bg-success">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <div class="stat-value"><?php echo $totalPatients; ?></div>
+                                    <div class="stat-label">মোট পেশেন্ট</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-people"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stat-card bg-warning">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="stat-value">৳<?php echo number_format($totalIncome); ?></div>
-                                        <div class="stat-label">মোট আয়</div>
-                                    </div>
-                                    <div class="stat-icon">
-                                        <i class="bi bi-currency-dollar"></i>
-                                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card stat-card bg-warning">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <div class="stat-value">৳<?php echo number_format($totalIncome); ?></div>
+                                    <div class="stat-label">মোট আয়</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-currency-dollar"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="col-xl-3 col-md-6">
-                        <div class="stat-card bg-info">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1">
-                                        <div class="stat-value"><?php echo $visitors['today']; ?></div>
-                                        <div class="stat-label">আজকের ভিজিটর</div>
-                                    </div>
-                                    <div class="stat-icon">
-                                        <i class="bi bi-eye"></i>
-                                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card stat-card bg-info">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <div class="stat-value"><?php echo $todayAppointments; ?></div>
+                                    <div class="stat-label">আজকের অ্যাপয়েন্টমেন্ট</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-day"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Performance Metrics -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-3">
-                        <div class="metric-card">
-                            <div class="metric-value text-success"><?php echo number_format($satisfactionRate, 1); ?>%</div>
-                            <div class="metric-label">রোগী সন্তুষ্টির হার</div>
+                <!-- Financial Summary -->
+                <div class="row mb-4">
+                    <div class="col-xl-6">
+                        <div class="profit-card">
+                            <h5 class="mb-3">আর্থিক সারসংক্ষেপ</h5>
+                            <div class="percentage-display">
+                                <div class="percentage-item">
+                                    <div class="percentage-value text-success"><?php echo round($incomePercentage, 1); ?>%</div>
+                                    <div class="percentage-label">আয়ের হার</div>
+                                </div>
+                                <div class="percentage-item">
+                                    <div class="percentage-value text-danger"><?php echo round($expensePercentage, 1); ?>%</div>
+                                    <div class="percentage-label">খরচের হার</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="metric-value <?php echo $netProfit >= 0 ? 'profit-positive' : 'profit-negative'; ?>">
+                                        ৳<?php echo number_format($netProfit); ?>
+                                    </div>
+                                    <div class="metric-label">সর্বমোট লাভ/ক্ষতি</div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-value <?php echo $thisMonthProfit >= 0 ? 'profit-positive' : 'profit-negative'; ?>">
+                                        ৳<?php echo number_format($thisMonthProfit); ?>
+                                    </div>
+                                    <div class="metric-label">এই মাসের লাভ/ক্ষতি</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="metric-card">
-                            <div class="metric-value text-warning"><?php echo $avgWaitingTime; ?> মিনিট</div>
-                            <div class="metric-label">গড় অপেক্ষার সময়</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="metric-card">
-                            <div class="metric-value text-info"><?php echo number_format($conversionRate, 1); ?>%</div>
-                            <div class="metric-label">কনভার্শন রেট</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="metric-card">
-                            <div class="metric-value text-primary"><?php echo number_format($retentionRate, 1); ?>%</div>
-                            <div class="metric-label">রোগী রিটেনশন রেট</div>
+                    
+                    <div class="col-xl-6">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value text-success"><?php echo round($satisfactionRate); ?>%</div>
+                                    <div class="metric-label">সন্তুষ্টির হার</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value text-warning"><?php echo $avgWaitingTime; ?> মিনিট</div>
+                                    <div class="metric-label">গড় অপেক্ষার সময়</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value text-info"><?php echo round($conversionRate); ?>%</div>
+                                    <div class="metric-label">কনভার্সন রেট</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="metric-card">
+                                    <div class="metric-value text-primary"><?php echo $totalInquiries; ?></div>
+                                    <div class="metric-label">মোট ইনকোয়ারি</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Charts Row 1 -->
+                <!-- Charts Row -->
                 <div class="row">
-                    <div class="col-lg-6">
+                    <!-- Income vs Expense Chart -->
+                    <div class="col-xl-8 col-lg-7">
                         <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-pie-chart text-primary"></i>
-                                সেবাভিত্তিক চাহিদা
-                            </h5>
+                            <div class="chart-title">
+                                <i class="bi bi-bar-chart text-primary"></i>
+                                আয় বনাম খরচ (শেষ ৩০ দিন)
+                            </div>
+                            <div class="chart-container chart-container-medium">
+                                <canvas id="incomeExpenseChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Distribution -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="bi bi-pie-chart text-success"></i>
+                                সেবা বিতরণ
+                            </div>
                             <div class="chart-container chart-container-small">
                                 <canvas id="serviceChart"></canvas>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-graph-up text-success"></i>
-                                মাসিক আয়ের ট্রেন্ড
-                            </h5>
-                            <div class="chart-container chart-container-small">
-                                <canvas id="incomeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Charts Row 2 -->
+                <!-- Additional Charts -->
                 <div class="row">
-                    <div class="col-lg-8">
+                    <!-- Monthly Trends -->
+                    <div class="col-xl-6">
                         <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-bar-chart text-warning"></i>
-                                দৈনিক আয়-ব্যয় (শেষ ৩০ দিন)
-                            </h5>
+                            <div class="chart-title">
+                                <i class="bi bi-graph-up text-info"></i>
+                                মাসিক আয়ের ট্রেন্ড (১২ মাস)
+                            </div>
                             <div class="chart-container chart-container-large">
-                                <canvas id="dailyFinanceChart"></canvas>
+                                <canvas id="monthlyTrendChart"></canvas>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
+                    
+                    <!-- Age Distribution -->
+                    <div class="col-xl-6">
                         <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-people text-info"></i>
-                                রোগীর বয়স গ্রুপ
-                            </h5>
+                            <div class="chart-title">
+                                <i class="bi bi-person-circle text-warning"></i>
+                                পেশেন্টদের বয়স বিতরণ
+                            </div>
                             <div class="chart-container chart-container-large">
                                 <canvas id="ageChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Charts Row 3 -->
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-clock text-primary"></i>
-                                জনপ্রিয় সময়স্লট
-                            </h5>
-                            <div class="chart-container chart-container-medium">
-                                <canvas id="timeSlotChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-star text-warning"></i>
-                                রিভিউ স্কোর ট্রেন্ড
-                            </h5>
-                            <div class="chart-container chart-container-medium">
-                                <canvas id="reviewTrendChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Location Analytics -->
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-geo-alt text-danger"></i>
-                                এলাকাভিত্তিক রোগী বিতরণ
-                            </h5>
-                            <?php foreach ($topLocations as $location => $count): ?>
-                            <div class="location-item">
-                                <span class="location-name"><?php echo htmlspecialchars($location); ?></span>
-                                <span class="location-count"><?php echo $count; ?> জন</span>
-                            </div>
-                            <div class="progress-modern mb-2">
-                                <div class="progress-bar-modern bg-primary" style="width: <?php echo ($count / max($topLocations)) * 100; ?>%"></div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="chart-card">
-                            <h5 class="chart-title">
-                                <i class="bi bi-calendar-event text-success"></i>
-                                সাম্প্রতিক অ্যাপয়েন্টমেন্ট
-                            </h5>
-                            <?php 
-                            $recentAppointments = array_slice(array_reverse($appointments), 0, 5);
-                            if (!empty($recentAppointments)): 
-                            ?>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>নাম</th>
-                                            <th>সেবা</th>
-                                            <th>স্ট্যাটাস</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($recentAppointments as $appointment): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars(substr($appointment['name'], 0, 15)); ?></td>
-                                            <td><?php echo htmlspecialchars(substr($appointment['service'], 0, 20)); ?></td>
-                                            <td>
-                                                <?php
-                                                $status = $appointment['status'] ?? 'pending';
-                                                $statusClass = $status === 'approved' ? 'success' : ($status === 'rejected' ? 'danger' : 'warning');
-                                                $statusText = $status === 'approved' ? 'অনুমোদিত' : ($status === 'rejected' ? 'বাতিল' : 'অপেক্ষমাণ');
-                                                ?>
-                                                <span class="badge bg-<?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
-                                            </td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <?php else: ?>
-                            <p class="text-muted text-center">কোনো অ্যাপয়েন্টমেন্ট নেই</p>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </main>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // Chart configurations - Optimized for performance
-        Chart.defaults.font.family = 'Segoe UI';
-        Chart.defaults.font.size = 12;
-        Chart.defaults.responsive = true;
-        Chart.defaults.maintainAspectRatio = false;
-
-        // Disable animations for better performance
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                duration: 0 // Disable animations for faster rendering
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            }
-        };
-
-        // 1. Service Pie Chart - Fixed Height
-        const serviceData = <?php echo json_encode($serviceStats); ?>;
-        const serviceLabels = Object.keys(serviceData);
-        const serviceValues = Object.values(serviceData);
-        
-        new Chart(document.getElementById('serviceChart'), {
-            type: 'doughnut',
-            data: {
-                labels: serviceLabels,
-                datasets: [{
-                    data: serviceValues,
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                        '#9966FF', '#FF9F40', '#FF6384', '#36A2EB'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                ...chartOptions,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { 
-                            padding: 15,
-                            usePointStyle: true
-                        }
-                    }
-                }
-            }
-        });
-
-        // 2. Monthly Income Chart
-        const incomeData = <?php echo json_encode($monthlyIncome); ?>;
-        
-        new Chart(document.getElementById('incomeChart'), {
+        // Income vs Expense Chart
+        const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+        new Chart(incomeExpenseCtx, {
             type: 'line',
             data: {
-                labels: incomeData.map(d => d.month),
-                datasets: [{
-                    label: 'মাসিক আয়',
-                    data: incomeData.map(d => d.amount),
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                ...chartOptions,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '৳' + value.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-
-        // 3. Daily Finance Chart
-        const dailyData = <?php echo json_encode($dailyFinance); ?>;
-        
-        new Chart(document.getElementById('dailyFinanceChart'), {
-            type: 'bar',
-            data: {
-                labels: dailyData.map(d => d.date),
+                labels: <?php echo json_encode(array_column($dailyFinance, 'date')); ?>,
                 datasets: [{
                     label: 'আয়',
-                    data: dailyData.map(d => d.income),
-                    backgroundColor: '#28a745',
-                    borderRadius: 4,
-                    maxBarThickness: 30
+                    data: <?php echo json_encode(array_column($dailyFinance, 'income')); ?>,
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
                 }, {
-                    label: 'ব্যয়',
-                    data: dailyData.map(d => d.expense),
-                    backgroundColor: '#dc3545',
-                    borderRadius: 4,
-                    maxBarThickness: 30
+                    label: 'খরচ',
+                    data: <?php echo json_encode(array_column($dailyFinance, 'expense')); ?>,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
                 }]
             },
             options: {
-                ...chartOptions,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '৳' + value.toLocaleString();
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // 4. Age Group Chart
-        const ageData = <?php echo json_encode($ageGroups); ?>;
-        
-        new Chart(document.getElementById('ageChart'), {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(ageData),
-                datasets: [{
-                    data: Object.values(ageData),
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                ...chartOptions,
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom',
-                        labels: { 
-                            padding: 10,
-                            usePointStyle: true
-                        }
+                        position: 'top'
                     }
-                }
-            }
-        });
-
-        // 5. Time Slot Chart
-        const timeData = <?php echo json_encode($timeSlots); ?>;
-        
-        new Chart(document.getElementById('timeSlotChart'), {
-            type: 'bar',
-            data: {
-                labels: Object.keys(timeData),
-                datasets: [{
-                    label: 'অ্যাপয়েন্টমেন্ট সংখ্যা',
-                    data: Object.values(timeData),
-                    backgroundColor: '#007bff',
-                    borderRadius: 4,
-                    maxBarThickness: 40
-                }]
-            },
-            options: {
-                ...chartOptions,
+                },
                 scales: {
                     y: {
                         beginAtZero: true
                     }
-                },
-                plugins: {
-                    legend: { display: false }
                 }
             }
         });
 
-        // 6. Review Trend Chart
-        const reviewData = <?php echo json_encode($reviewTrend); ?>;
-        
-        new Chart(document.getElementById('reviewTrendChart'), {
-            type: 'line',
+        // Service Chart
+        const serviceCtx = document.getElementById('serviceChart').getContext('2d');
+        new Chart(serviceCtx, {
+            type: 'doughnut',
             data: {
-                labels: reviewData.map(d => d.month),
+                labels: <?php echo json_encode(array_keys($serviceStats)); ?>,
                 datasets: [{
-                    label: 'গড় রেটিং',
-                    data: reviewData.map(d => d.rating),
-                    borderColor: '#ffc107',
-                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointRadius: 5,
-                    pointHoverRadius: 7
+                    data: <?php echo json_encode(array_values($serviceStats)); ?>,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                        '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                    ]
                 }]
             },
             options: {
-                ...chartOptions,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 5,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
             }
         });
 
-        // Performance optimization: Lazy load charts on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '50px'
-        };
-
-        const chartObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
+        // Monthly Trend Chart
+        const monthlyTrendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+        new Chart(monthlyTrendCtx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode(array_column($monthlyIncome, 'month')); ?>,
+                datasets: [{
+                    label: 'আয়',
+                    data: <?php echo json_encode(array_column($monthlyIncome, 'amount')); ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
-            });
-        }, observerOptions);
+            }
+        });
 
-        // Observe all chart containers
-        document.querySelectorAll('.chart-container').forEach(container => {
-            chartObserver.observe(container);
+        // Age Chart
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        new Chart(ageCtx, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode(array_keys($ageGroups)); ?>,
+                datasets: [{
+                    label: 'পেশেন্ট সংখ্যা',
+                    data: <?php echo json_encode(array_values($ageGroups)); ?>,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 205, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
     </script>
 </body>
